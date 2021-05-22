@@ -9,9 +9,10 @@ library(tm)
 library(ggplot2)
 library(reshape2)
 
-wd <- '~/Dropbox/lse/gi499/diss/quant'
+wd <- ''
 setwd(wd)
 
+### Set Up ###
 
 # general functions and palette
 char_func <- function(x){as.numeric(as.character(x))}
@@ -70,16 +71,17 @@ table_1 <- data.frame(rbind(race,
                             violence,
                             industry))
 
-### participation ###
+### Calculating Participation ###
 
+# prepare dataframes
 all.df$edits_user <- as.numeric(as.character(all.df$edits_user))
 all.df$views <- as.numeric(as.character(all.df$views))
 all.df$bytes <- as.numeric(as.character(all.df$bytes))
 
+#remove harvey
 all_hw.df <- all.df[all.df$page != 'Harvey_Weinstein',]
 
-# data prep & actual analysis
-
+# data prep & analysis
 p_func <- function(df,x){
   df <- df[x != 0,]
   x <- x[x != 0]
@@ -98,14 +100,14 @@ p_func <- function(df,x){
   return(df)
 }
 
+# calculate views, edits and byte changes across all pages
+
 p_func(all.df, all.df$views)
 p_func(all.df, all.df$edits_all)
 p_func(all.df, all.df$bytes)
 
-
 summary(all.df$views[all.df$range < 0])
 summary(all.df$views[all.df$range >= 0])
-
 
 summary(all.df$edits_all[all.df$range < 0])
 summary(all.df$edits_all[all.df$range >= 0])
@@ -129,7 +131,7 @@ wilcox.test(all.df$edits_user[all.df$range < 0], all.df$edits_user[all.df$range 
 wilcox.test(all_hw.df$bytes[all.df$range < 0], all_hw.df$bytes[all.df$range >= 0])
 wilcox.test(all_z.df$edits_all[all_z.df$range < 0], all_z.df$edits_all[all_z.df$range >= 0])
 
-### LOOK AT THESE GRAPHS
+### make graphs 
 v_pal <- c(rep(pal[6], 76))
 e_pal <- c(rep(pal[7], 76))
 b_pal <- c(rep(pal[8], 76))
@@ -239,7 +241,7 @@ plot_4 <- ggplot(p_melted.df, aes(value, group = page)) +
   geom_vline(xintercept = 0, linetype = "dashed")
 
 
-# all in agg
+# all in aggregate
 
 v_agg <-  aggregate(as.numeric(as.character(p_melted.df$views)), 
                     list(p_melted.df$value), 
@@ -311,7 +313,7 @@ plot_func('Stan_Lee') # investigation, dismissed
 plot_func('Karl_Templer')
 
 
-#### Calculating Expertise
+### Calculating Expertise ###
 
 # what language is in the text 
 # make a dictionary of terms
